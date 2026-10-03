@@ -6,17 +6,18 @@ using UserDetails.Infrastructure.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
-
+// PostgreSQL Database
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("AS1DbConnection"),
-        sqlOptions =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("VendorInfoDbConnection"),
+        npgsqlOptions =>
         {
-            sqlOptions.EnableRetryOnFailure();
+            npgsqlOptions.EnableRetryOnFailure();
         });
 });
 
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
@@ -28,10 +29,10 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Services
 builder.Services.AddScoped<IUserDetails, UserDetailsService>();
 
-// Add services to the container.
-
+// Controllers
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
